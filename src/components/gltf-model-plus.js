@@ -771,11 +771,20 @@ class GLTFHubsLoopAnimationComponent {
     }
 
     // TODO: Optimize if needed
-    const findAnimation = name => {
+    const findAnimation = (name, nodeIndex) => {
+      console.log("name: ", name, "nodeIndex: ", nodeIndex)
       for (let animationIndex = 0; animationIndex < json.animations.length; animationIndex++) {
         const animationDef = json.animations[animationIndex];
+        console.log("json animations: ", json.animations)
+        console.log("animationName: ", animationDef.name)
         if (animationDef.name === name) {
-          return animationIndex;
+          for (const channel of animationDef.channels) {
+            console.log("target node: ", channel.target.node)
+            if (channel.target.node !== undefined && channel.target.node === nodeIndex) {
+              console.log("animationIndex: ", animationIndex)
+              return animationIndex;
+            }
+          }
         }
       }
       return null;
@@ -794,8 +803,6 @@ class GLTFHubsLoopAnimationComponent {
 
       return nodeIndices;
     };
-
-    const clonedAnimations = [];
 
     for (let nodeIndex = 0; nodeIndex < json.nodes.length; nodeIndex++) {
       const nodeDef = json.nodes[nodeIndex];
@@ -816,44 +823,19 @@ class GLTFHubsLoopAnimationComponent {
         const nodeIndices = collectNodeIndices(nodeIndex, new Set());
 
         for (const clipName of clipNames) {
-          const animationIndex = findAnimation(clipName);
+          const animationIndex = findAnimation(clipName, nodeIndex);
 
           if (animationIndex === null) {
             continue;
           }
 
-          const clonedAnimation = structuredClone(json.animations[animationIndex]);
-          let updated = false;
+          activeClipIndices.push(animationIndex);
 
-          for (const channel of clonedAnimation.channels) {
-            if (channel.target.node !== undefined && !nodeIndices.has(channel.target.node)) {
-              // The old loop-animation handler (without bitECS) seems to retarget
-              // the loop-animation component root node if traget node is unfound
-              // under the loop-animation component root node.
-              // Here follows it for the compatibility, not sure if it's the best approach.
-              // Another approach may be to find a glTF.animation that is likely for
-              // this node. It may be guessed with target node.
-              channel.target.node = nodeIndex;
-              updated = true;
-            }
-          }
-
-          if (updated) {
-            // Retargetted so need to add a new glTF.animation.
-            activeClipIndices.push(json.animations.length + clonedAnimations.length);
-            clonedAnimations.push(clonedAnimation);
-          } else {
-            activeClipIndices.push(animationIndex);
-          }
         }
 
         extensionDef.activeClipIndices = activeClipIndices;
         delete extensionDef.clip;
       }
-    }
-
-    for (const animation of clonedAnimations) {
-      json.animations.push(animation);
     }
   }
 }
