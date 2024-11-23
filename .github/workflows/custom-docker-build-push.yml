@@ -1,36 +1,44 @@
 # Based on the workflow by by BrandonP from https://github.com/mikemorran/hubs/blob/master/.github/workflows/ce-build.yml
-# input masking referenced from https://dev.to/leading-edje/masking-input-parameters-in-github-actions-1ci
+# Input masking referenced from https://dev.to/leading-edje/masking-input-parameters-in-github-actions-1ci
+
+# Common registry base URLs:
+# Docker Hub: docker.io
+# GitHub: ghcr.io
 
 name: custom-docker-build-push
 
 on:
   workflow_dispatch:
     inputs:
-      Registry_Base_URL:
+      Override_Registry_Base_URL:
         type: string
-      Registry_Username:
+      Override_Registry_Username:
         type: string
-      Registry_Password:
+      Override_Registry_Password:
         type: string
-      Registry_Namespace:
+      Override_Registry_Namespace:
         type: string
-      Image_Tag:
+      Override_Image_Tag:
         type: string
-      Dockerfile:
+      Override_Dockerfile:
         type: string
-      codePath:
+      Override_Code_Path:
         type: string
+      Use_Build_Cache:
+        type: boolean
+        default: true
 
 # Add in default values for the inputs plus define any missing variables we need.
 # Everything should take their values from env rather than inputs.
 env:
-  Registry_Base_URL: ${{ inputs.Registry_Base_URL || vars.REGISTRY_BASE_URL }}
+  Registry_Base_URL: ${{ inputs.Override_Registry_Base_URL || vars.REGISTRY_BASE_URL }}
 # Registry_Username: This must be added in each job that needs it.
 # Registry_Password: This must be added in each job that needs it.
-  Registry_Namespace: ${{ inputs.Registry_Namespace || vars.REGISTRY_NAMESPACE }}
-  Image_Tag: ${{ inputs.Image_Tag || github.ref_name }}
-  Dockerfile: ${{ inputs.Dockerfile || 'RetPageOriginDockerfile' }}
-  codePath: ${{ inputs.codePath }}
+  Registry_Namespace: ${{ inputs.Override_Registry_Namespace || vars.REGISTRY_NAMESPACE }}
+  Image_Tag: ${{ inputs.Override_Image_Tag || github.ref_name }}
+  Dockerfile: ${{ inputs.Override_Dockerfile || 'RetPageOriginDockerfile' }}
+  Code_Path: ${{ inputs.Override_Code_Path }}
+  Use_Build_Cache: ${{ inputs.Use_Build_Cache }}
 # repo_name: This must be added in each job that needs it.
 
 jobs:
@@ -39,26 +47,26 @@ jobs:
 
     steps:
       - name: Assign username from secret
-        if: ${{ inputs.Registry_Username == ''}}
+        if: ${{ inputs.Override_Registry_Username == ''}}
         run: |
           echo "Registry_Username=${{ secrets.REGISTRY_USERNAME }}" >> "$GITHUB_ENV"
 
       - name: Assign username from input
-        if: ${{ inputs.Registry_Username != ''}}
+        if: ${{ inputs.Override_Registry_Username != ''}}
         run: |
-          USERNAME=$(jq -r '.inputs.Registry_Username' $GITHUB_EVENT_PATH)
+          USERNAME=$(jq -r '.inputs.Override_Registry_Username' $GITHUB_EVENT_PATH)
           echo ::add-mask::$USERNAME
           echo Registry_Username=$USERNAME >> $GITHUB_ENV
 
       - name: Assign password from secret
-        if: ${{ inputs.Registry_Password == ''}}
+        if: ${{ inputs.Override_Registry_Password == ''}}
         run: |
           echo "Registry_Password=${{ secrets.REGISTRY_PASSWORD }}" >> "$GITHUB_ENV"
 
       - name: Assign password from input
-        if: ${{ inputs.Registry_Password != ''}}
+        if: ${{ inputs.Override_Registry_Password != ''}}
         run: |
-          PASSWORD=$(jq -r '.inputs.Registry_Password' $GITHUB_EVENT_PATH)
+          PASSWORD=$(jq -r '.inputs.Override_Registry_Password' $GITHUB_EVENT_PATH)
           echo ::add-mask::$PASSWORD
           echo Registry_Password=$PASSWORD >> $GITHUB_ENV
 
@@ -70,9 +78,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
         with:
           install: true
+
       - name: Login to container registry
         uses: docker/login-action@v3
         with:
@@ -85,26 +94,36 @@ jobs:
         with:
           path: "./repo"
 
-      - name: Use codePath for multirepo
-        if: ${{ env.codePath != ''}}
+      - name: Use Code_Path for multirepo
+        if: ${{ env.Code_Path != ''}}
         run: |
           mkdir ./_repo
-          cp -rf ./repo/${{ env.codePath }}/* ./_repo
+          cp -rf ./repo/${{ env.Code_Path }}/* ./_repo
           rm -rf ./repo
           mv ./_repo ./repo
           ls ./repo
 
       - name: Docker Buildx setup
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
         with:
           install: true
 
-      - name: Docker Build and Push
+      - name: Docker Build and Push (with cache)
+        if: ${{ fromJSON(env.Use_Build_Cache) == true }}
         uses: docker/build-push-action@v6
         with:
           context: repo/
           file: repo/${{ env.Dockerfile }}
           tags: ${{ env.Registry_Base_URL }}/${{ env.Registry_Namespace }}/${{ env.repo_name }}:${{ env.Image_Tag }}-latest,${{ env.Registry_Base_URL }}/${{ env.Registry_Namespace }}/${{ env.repo_name }}:${{ env.Image_Tag }}-${{ github.run_number }}
           cache-from: type=registry,ref=${{ env.Registry_Base_URL }}/${{ env.Registry_Namespace }}/${{ env.repo_name }}:buildcache
-          cache-to: type=registry,ref=${{ env.Registry_Base_URL }}/${{ env.Registry_Namespace }}/${{ env.repo_name }}:buildcache,mode=max
+          cache-to: type=registry,ref=${{ env.Registry_Base_URL }}/${{ env.Registry_Namespace }}/${{ env.repo_name }}:buildcache,mode=max,image-manifest=true,oci-mediatypes=true
+          push: true
+
+      - name: Docker Build and Push (no cache)
+        if: ${{ fromJSON(env.Use_Build_Cache) == false }}
+        uses: docker/build-push-action@v6
+        with:
+          context: repo/
+          file: repo/${{ env.Dockerfile }}
+          tags: ${{ env.Registry_Base_URL }}/${{ env.Registry_Namespace }}/${{ env.repo_name }}:${{ env.Image_Tag }}-latest,${{ env.Registry_Base_URL }}/${{ env.Registry_Namespace }}/${{ env.repo_name }}:${{ env.Image_Tag }}-${{ github.run_number }}
           push: true
