@@ -5,13 +5,8 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 
 const styles = () => ({
-  scrollWrapper: {
-    position: "relative",
-    height: "100vh",
-    overflow: "hidden"
-  },
   scrollContent: {
-    height: "100%",
+    height: "80%",
     overflowY: "auto",
     scrollbarWidth: "none",
     msOverflowStyle: "none",
@@ -110,10 +105,6 @@ class ScrollableMenuWrapper extends Component {
     const { showTopIndicator, showBottomIndicator } = this.state;
 
     return (
-      <div className={classes.scrollWrapper}>
-        <div ref={this.scrollRef} className={classes.scrollContent} onScroll={this.checkScrollIndicators}>
-          {children}
-        </div>
         <div
           className={`${classes.scrollIndicator} ${classes.topIndicator} ${
             showTopIndicator ? classes.visible : classes.hidden
@@ -121,6 +112,8 @@ class ScrollableMenuWrapper extends Component {
         >
           <KeyboardArrowUpIcon />
         </div>
+        <div ref={this.scrollRef} className={classes.scrollContent} onScroll={this.checkScrollIndicators}>
+          {children}
         <div
           className={`${classes.scrollIndicator} ${classes.bottomIndicator} ${
             showBottomIndicator ? classes.visible : classes.hidden
@@ -128,7 +121,7 @@ class ScrollableMenuWrapper extends Component {
         >
           <KeyboardArrowDownIcon />
         </div>
-      </div>
+        </div>
     );
   }
 }
