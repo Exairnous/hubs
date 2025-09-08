@@ -72,7 +72,7 @@ const CustomNotification = props => {
 let itaSchemas;
 
 const theme = createTheme({
-  ...defaultTheme
+  ...defaultTheme,
   components: {
     MuiDrawer: {
       styleOverrides: {
