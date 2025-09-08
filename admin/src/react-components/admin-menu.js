@@ -29,8 +29,8 @@ const mapStateToProps = state => ({
 const styles = () => ({
   root: {
     width: "100%",
-    paddingTop: 0,
-    paddingBottom: 0,
+    // paddingTop: 0,
+    // paddingBottom: 0,
     backgroundColor: "#222222",
 
     "& .active": {
