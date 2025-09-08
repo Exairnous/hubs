@@ -19,9 +19,8 @@ import Collapse from "@material-ui/core/Collapse";
 import { getServiceDisplayName } from "../utils/ita";
 import configs from "../utils/configs";
 import { hasPaidFeature, isBrandingDisabled } from "../utils/feature_flags";
-// Use static asset path instead of import to avoid webpack processing
-const HubsLogo = "/images/hubs_logo.png";
-import ScrollableMenuWrapper from "./scrollable-menu-wrapper";
+import HubsLogo from "../assets/images/hubs_logo.png";
+//import ScrollableMenuWrapper from "./scrollable-menu-wrapper";
 
 const mapStateToProps = state => ({
   resources: getResources(state)
@@ -57,13 +56,10 @@ const styles = () => ({
     margin: 0,
     padding: 0,
     backgroundColor: "#222222 !important",
-    borderBottom: "1px solid #333",
 
     "& img": {
-      padding: "12px 12px 8px 12px",
-      width: "200px",
-      maxWidth: "100%",
-      height: "auto"
+      padding: "0 12px 8px 12px",
+      width: "200px"
     }
   },
   icon: {
@@ -136,7 +132,7 @@ class Menu extends Component {
   render() {
     if (configs.ITA_SERVER == "turkey") {
       return (
-        <ScrollableMenuWrapper>
+        //<ScrollableMenuWrapper>
           <List className={this.props.classes.root}>
             <ListItem className={this.props.classes.logo}>
               <img className={this.props.classes.logo} src={HubsLogo} />
@@ -227,11 +223,11 @@ class Menu extends Component {
               </List>
             </Collapse>
           </List>
-        </ScrollableMenuWrapper>
+        //</ScrollableMenuWrapper>
       );
     } else {
       return (
-        <ScrollableMenuWrapper>
+        //<ScrollableMenuWrapper>
           <List className={this.props.classes.root}>
             <ListItem className={this.props.classes.logo}>
               <img className={this.props.classes.logo} src={HubsLogo} />
@@ -351,7 +347,7 @@ class Menu extends Component {
               </List>
             </Collapse>
           </List>
-        </ScrollableMenuWrapper>
+        //</ScrollableMenuWrapper>
       );
     }
   }

@@ -15,7 +15,7 @@ import {
 } from "./utils/ita";
 import { detectIdle } from "./utils/idle-detector";
 import { connectToReticulum } from "hubs/src/utils/phoenix-utils";
-import { Admin, Layout, Resource, Notification } from "react-admin";
+import { Admin, Layout, Resource, Notification, defaultTheme } from "react-admin";
 import { postgrestClient, postgrestAuthenticatior } from "./utils/postgrest-data-provider";
 import { AdminMenu } from "./react-components/admin-menu";
 import { SceneList, SceneEdit } from "./react-components/scenes";
@@ -72,24 +72,13 @@ const CustomNotification = props => {
 let itaSchemas;
 
 const theme = createTheme({
+  ...defaultTheme
   components: {
     MuiDrawer: {
       styleOverrides: {
         paper: {
           backgroundColor: "#222222",
-          minHeight: "100vh",
-          position: "sticky",
-          top: 0,
-          overflowX: "hidden"
-        }
-      }
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          position: "sticky",
-          top: 0,
-          zIndex: 1100
+          minHeight: "100vh"
         }
       }
     }
@@ -262,6 +251,17 @@ const mountUI = async (retPhxChannel, customRoutes, layout) => {
   );
 };
 
+const HiddenAppBar = withStyles({
+  hideOnDesktop: {
+    "@media (min-width: 768px) and (min-height: 480px)": {
+      display: "none"
+    }
+  }
+})(props => {
+  const { classes, ...other } = props;
+  return <AppBar {...other} className={classes.hideOnDesktop} />;
+});
+
 document.addEventListener("DOMContentLoaded", async () => {
   const socket = await connectToReticulum();
 
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     <Layout
       {...props}
       className="global_background"
-      appBar={() => null}
+      appBar={() => HiddenAppBar}
       menu={props => <AdminMenu {...props} services={schemaCategories} />}
     />
   );
