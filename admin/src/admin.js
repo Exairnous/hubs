@@ -251,16 +251,16 @@ const mountUI = async (retPhxChannel, customRoutes, layout) => {
   );
 };
 
-// const HiddenAppBar = withStyles({
-//   hideOnDesktop: {
-//     "@media (min-width: 768px) and (min-height: 480px)": {
-//       display: "none"
-//     }
-//   }
-// })(props => {
-//   const { classes, ...other } = props;
-//   return <AppBar {...other} className={classes.hideOnDesktop} />;
-// });
+const HiddenAppBar = withStyles({
+  hideOnDesktop: {
+    "@media (min-width: 768px) and (min-height: 480px)": {
+      display: "none"
+    }
+  }
+})(props => {
+  const { classes, ...other } = props;
+  return <AppBar {...other} className={classes.hideOnDesktop} />;
+});
 
 document.addEventListener("DOMContentLoaded", async () => {
   const socket = await connectToReticulum();
@@ -333,8 +333,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     <Layout
       {...props}
       className="global_background"
-      //appBar={HiddenAppBar}
-      appBar={() => null}
+      appBar={HiddenAppBar}
+      // appBar={() => null}
       menu={props => <AdminMenu {...props} services={schemaCategories} />}
     />
   );

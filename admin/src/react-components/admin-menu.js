@@ -75,12 +75,12 @@ const styles = () => ({
       fontSize: 14
     },
 
-    "@media (max-width: 599.95px) and (min-width: 0px)": {
-      // Used to override typography on mobile
-      "& span ": {
-        color: "#333333"
-      }
-    }
+    // "@media (max-width: 599.95px) and (min-width: 0px)": {
+    //   // Used to override typography on mobile
+    //   "& span ": {
+    //     color: "#333333"
+    //   }
+    // }
   },
   nested: {
     paddingLeft: 40
