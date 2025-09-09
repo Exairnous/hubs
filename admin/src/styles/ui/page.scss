@@ -10,6 +10,13 @@
 .global_background {
   // need to override material
   background-color: $color-neutral-1 !important;
+
+  // Hide the gap left by the app bar when it's hidden
+  & div {
+    @media (min-width: 768px) and (min-height: 480px) {
+      margin-top: 0;
+    }
+  }
 //   padding: 0 !important;
 //   margin: 0 !important;
 //

@@ -328,7 +328,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     );
   }
 
-  // Use standard React Admin Layout - will revisit gap issue in v4 upgrade
+
   const layout = props => (
     <Layout
       {...props}
