@@ -39,7 +39,6 @@ import { UnauthorizedPage } from "./react-components/unauthorized";
 import { store } from "hubs/src/utils/store-instance";
 
 const qs = new URLSearchParams(location.hash.split("?")[1]);
-const hiddenAppBarMediaQuery = "@media (min-width: 768px) and (min-height: 480px)";
 
 window.APP = { store };
 
@@ -80,7 +79,13 @@ const theme = createTheme({
         paper: {
           backgroundColor: "#222222",
           minHeight: "100vh",
-          [`${hiddenAppBarMediaQuery}`]: {
+          "@media (min-width: 768px) and (min-height: 480px)": {
+            minHeight: "110vh"
+          }
+        },
+        root: {
+          minHeight: "100vh",
+          "@media (min-width: 768px) and (min-height: 480px)": {
             minHeight: "110vh"
           }
         }
@@ -257,7 +262,7 @@ const mountUI = async (retPhxChannel, customRoutes, layout) => {
 
 const HiddenAppBar = withStyles({
   hideOnDesktop: {
-    [`${hiddenAppBarMediaQuery}`]: {
+    "@media (min-width: 768px) and (min-height: 480px)": {
       display: "none"
     }
   }

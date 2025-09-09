@@ -21,6 +21,7 @@ import configs from "../utils/configs";
 import { hasPaidFeature, isBrandingDisabled } from "../utils/feature_flags";
 import HubsLogo from "../assets/images/hubs_logo.png";
 //import ScrollableMenuWrapper from "./scrollable-menu-wrapper";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 
 const mapStateToProps = state => ({
   resources: getResources(state)
@@ -29,7 +30,7 @@ const mapStateToProps = state => ({
 const styles = () => ({
   root: {
     width: "100%",
-    // paddingTop: 0,
+    paddingTop: 0,
     // paddingBottom: 0,
     backgroundColor: "#222222",
 
@@ -84,6 +85,20 @@ const styles = () => ({
   },
   nested: {
     paddingLeft: 40
+  },
+  bottomIndicator: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    background: "linear-gradient(to top, rgba(34, 34, 34, 0.9) 0%, rgba(34, 34, 34, 0.7) 70%, transparent 100%)",
+    color: "#aaaaaa",
+    pointerEvents: "none",
+    zIndex: 9999,
+    transition: "opacity 0.5s ease",
+    opacity: 1
+  },
+  bottomIndicatorHidden: {
+    opacity: 0
   }
 });
 
@@ -129,11 +144,56 @@ class Menu extends Component {
     );
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      showBottomIndicator: true,
+      hasScrolled: false
+    };
+    this.scrollRef = React.createRef();
+  }
+
+  componentDidMount() {
+    // Check if we have overflow content
+    this.checkOverflow();
+
+    // Listen for window resize
+    window.addEventListener("resize", this.checkOverflow);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.checkOverflow);
+  }
+
+  checkOverflow = () => {
+    const element = this.scrollRef.current;
+    if (element) {
+      const hasOverflow = element.scrollHeight > element.clientHeight;
+      if (!hasOverflow || this.state.hasScrolled) {
+        // No overflow or already scrolled, hide the indicator
+        this.setState({ showBottomIndicator: false });
+      } else {
+        // Has overflow and hasn't scrolled yet
+        this.setState({ showBottomIndicator: true });
+      }
+    }
+  };
+
+  handleScroll = () => {
+    // Hide the indicator on first scroll
+    if (!this.state.hasScrolled) {
+      this.setState({
+        showBottomIndicator: false,
+        hasScrolled: true
+      });
+    }
+  };
+
   render() {
     if (configs.ITA_SERVER == "turkey") {
       return (
         //<ScrollableMenuWrapper>
-        <List className={this.props.classes.root}>
+        <List className={this.props.classes.root} onScroll={this.handleScroll}>
           <ListItem className={this.props.classes.logo}>
             <img className={this.props.classes.logo} src={HubsLogo} />
           </ListItem>
@@ -224,6 +284,13 @@ class Menu extends Component {
           </Collapse>
         </List>
         //</ScrollableMenuWrapper>
+        <div className={
+          `${this.props.classes.bottomIndicator} ${
+            !this.state.showBottomIndicator ?
+            this.props.classes.bottomIndicatorHidden : ""}`
+        }>
+          <KeyboardArrowDownIcon />
+        </div>
       );
     } else {
       return (
