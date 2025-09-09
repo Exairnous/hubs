@@ -80,7 +80,7 @@ const theme = createTheme({
         paper: {
           backgroundColor: "#222222",
           minHeight: "100vh",
-          `${hiddenAppBarMediaQuery}`: {
+          [`${hiddenAppBarMediaQuery}`]: {
             minHeight: "110vh"
           }
         }
@@ -257,7 +257,7 @@ const mountUI = async (retPhxChannel, customRoutes, layout) => {
 
 const HiddenAppBar = withStyles({
   hideOnDesktop: {
-    `${hiddenAppBarMediaQuery}`: {
+    [`${hiddenAppBarMediaQuery}`]: {
       display: "none"
     }
   }
