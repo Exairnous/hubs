@@ -15,7 +15,7 @@ import {
 } from "./utils/ita";
 import { detectIdle } from "./utils/idle-detector";
 import { connectToReticulum } from "hubs/src/utils/phoenix-utils";
-import { AppBar, Admin, Layout, Resource, Notification, defaultTheme } from "react-admin";
+import { AppBar, Admin, Layout, Resource, Notification, defaultTheme, Sidebar } from "react-admin";
 import { postgrestClient, postgrestAuthenticatior } from "./utils/postgrest-data-provider";
 import { AdminMenu } from "./react-components/admin-menu";
 import { SceneList, SceneEdit } from "./react-components/scenes";
@@ -37,6 +37,9 @@ import registerTelemetry from "hubs/src/telemetry";
 import { createTheme, withStyles } from "@material-ui/core/styles";
 import { UnauthorizedPage } from "./react-components/unauthorized";
 import { store } from "hubs/src/utils/store-instance";
+import classNames from "classnames";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 
 const qs = new URLSearchParams(location.hash.split("?")[1]);
 
@@ -78,16 +81,7 @@ const theme = createTheme({
       styleOverrides: {
         paper: {
           backgroundColor: "#222222",
-          minHeight: "100vh",
-          "@media (min-width: 768px) and (min-height: 480px)": {
-            minHeight: "110vh"
-          }
-        },
-        root: {
-          minHeight: "100vh",
-          "@media (min-width: 768px) and (min-height: 480px)": {
-            minHeight: "110vh"
-          }
+          minHeight: "100vh"
         }
       }
     }
@@ -124,11 +118,22 @@ class AdminUI extends Component {
     const adminInfo = await getAdminInfo();
     // Unauthorized account
     if (adminInfo.error && adminInfo.code === 401) this.setState({ isAdmin: false });
+
+    console.log("AdminUI componentDidMount");
+    // const sidebarScrollArea = document.querySelector(".adminSidebar > div > div");
+    // sidebarScrollArea.addEventListener("scroll", this.handleSidebarScrolling);
+    // window.addEventListener("resize", this.handleSidebarScrolling);
+    // this.handleSidebarScrolling();
   }
 
   componentWillUnmount() {
     window.removeEventListener("idle_detected", this.onIdleDetected);
     window.removeEventListener("activity_detected", this.onActivityDetected);
+
+    console.log("AdminUI componentWillUnmount");
+    // const sidebarScrollArea = document.querySelector(".adminSidebar > div > div");
+    // sidebarScrollArea.removeEventListener("scroll", this.handleSidebarScrolling);
+    // window.removeEventListener("resize", this.handleSidebarScrolling);
   }
 
   onIdleDetected = () => {
@@ -258,6 +263,7 @@ const mountUI = async (retPhxChannel, customRoutes, layout) => {
       />
     </IntlProvider>
   );
+  console.log("mountUI");
 };
 
 const HiddenAppBar = withStyles({
@@ -269,6 +275,41 @@ const HiddenAppBar = withStyles({
 })(props => {
   const { classes, ...other } = props;
   return <AppBar {...other} className={classes.hideOnDesktop} />;
+});
+
+const AdminSidebar = withStyles({
+  sidebarScrollingIndicator: {
+    position: "sticky",
+    display: "none",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#aaaaaa",
+    pointerEvents: "none",
+    zIndex: 9999,
+    transition: "opacity 0.5s ease",
+    opacity: 1
+  },
+  topIndicator: {
+    top: 0,
+    background: "linear-gradient(to bottom, rgba(0, 0, 0, 1.0) 0%, rgba(34, 34, 34, 0.7) 70%, transparent 100%)",
+  },
+  bottomIndicator: {
+    bottom: 0,
+    background: "linear-gradient(to top, rgba(0, 0, 0, 1.0) 0%, rgba(34, 34, 34, 0.7) 70%, transparent 100%)"
+  }
+})(props => {
+  const { classes, ...other } = props;
+  return (
+      <Sidebar className="adminSidebar">
+      <div className={classNames("adminSidebarTopIndicator", classes.sidebarScrollingIndicator, classes.topIndicator)}  >
+          <KeyboardArrowUpIcon />
+        </div>
+        {other.children}
+        <div className={classNames("adminSidebarBottomIndicator", classes.sidebarScrollingIndicator, classes.bottomIndicator)}  >
+          <KeyboardArrowDownIcon />
+        </div>
+      </Sidebar>
+  )
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -345,6 +386,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       appBar={HiddenAppBar}
       // appBar={() => null}
       menu={props => <AdminMenu {...props} services={schemaCategories} />}
+      sidebar={AdminSidebar}
     />
   );
 
