@@ -27,12 +27,12 @@
 }
 
 .global_background main {
-  background-color: $color-semantic-neutral;
+  background-color: #222222;
 }
 
-.adminSidebar > .MuiDrawer-paper {
-  background-color: $color-semantic-neutral !important;
-}
+// .adminSidebar > .MuiDrawer-paper {
+//   background-color: $color-semantic-neutral !important;
+// }
 
 .adminSidebar > .MuiDrawer-paper > div {
   height: calc(100% - 3em);
