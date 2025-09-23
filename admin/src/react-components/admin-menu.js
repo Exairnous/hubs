@@ -164,7 +164,7 @@ class Menu extends Component {
     console.log(`clientHeight: ${element.clientHeight}`);
     console.log(`scrollTop: ${element.scrollTop}`);
     console.log(`scrolling: ${element.scrollHeight - element.clientHeight - element.scrollTop}`);
-    if (element.scrollHeight > element.clientHeight) {
+    // if (element.scrollHeight > element.clientHeight) {
       // the window is small enough that we need to scroll
       const elementScrollBottom = element.scrollHeight - element.clientHeight - element.scrollTop
       const adminSidebarTopIndicator = document.querySelector(".adminSidebar .adminSidebarTopIndicator");
@@ -179,7 +179,7 @@ class Menu extends Component {
       } else {
         adminSidebarBottomIndicator.style.display = "flex";
       }
-    }
+    // }
   }
 
   componentDidMount() {
