@@ -184,7 +184,7 @@ class Menu extends Component {
 
   componentDidMount() {
     console.log("Menu componentDidMount");
-    const sidebarScrollArea = document.querySelector(".adminSidebar > div > div");
+    const sidebarScrollArea = document.querySelector(".adminSidebar > .MuiDrawer-paper > div");
     sidebarScrollArea.addEventListener("scroll", this.handleSidebarScrolling);
     window.addEventListener("resize", this.handleSidebarScrolling);
     this.handleSidebarScrolling();
@@ -200,7 +200,7 @@ class Menu extends Component {
   }
 
   componentWillUnmount() {
-    const sidebarScrollArea = document.querySelector(".adminSidebar > div > div");
+    const sidebarScrollArea = document.querySelector(".adminSidebar > .MuiDrawer-paper > div");
     sidebarScrollArea.removeEventListener("scroll", this.handleSidebarScrolling);
     window.removeEventListener("resize", this.handleSidebarScrolling);
   }

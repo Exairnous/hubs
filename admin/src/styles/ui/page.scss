@@ -26,6 +26,18 @@
 //   }
 }
 
+.global_background main {
+  background-color: $color-semantic-neutral;
+}
+
+.adminSidebar > .MuiDrawer-paper {
+  background-color: $color-semantic-neutral !important;
+}
+
+.adminSidebar > .MuiDrawer-paper > div {
+  height: calc(100% - 3em);
+}
+
 // .global_background > div {
 //   // Hide the gap left by the AppBar when it's hidden
 //   @media (min-width: 768px) and (min-height: 480px) {
