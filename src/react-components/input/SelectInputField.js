@@ -22,9 +22,9 @@ function getSelectedItem(value, options) {
 }
 
 function getItemLabel(item) {
-  if (item === null || item === undefined) {
-    return "";
-  }
+  // if (item === null || item === undefined) {
+  //   return "";
+  // }
   return typeof item === "object" ? item.label || item.value : item;
 }
 
