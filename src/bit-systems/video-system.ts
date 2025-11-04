@@ -193,7 +193,7 @@ export function videoSystem(world: HubsWorld, audioSystem: AudioSystem) {
     } else {
       let shouldUpdateVideo = false;
       const autoPlay = NetworkedVideo.flags[eid] & VIDEO_FLAGS.AUTO_PLAY ? true : false;
-      const loop = NetworkedVideo.flags[eid] & VIDEO_FLAGS.AUTO_PLAY ? true : false;
+      const loop = NetworkedVideo.flags[eid] & VIDEO_FLAGS.LOOP ? true : false;
       if (MediaVideo.flags[eid] !== NetworkedVideo.flags[eid]) {
         MediaVideo.flags[eid] = NetworkedVideo.flags[eid];
       }
@@ -203,7 +203,7 @@ export function videoSystem(world: HubsWorld, audioSystem: AudioSystem) {
       }
       const src = APP.getString(NetworkedVideo.src[eid])!;
       const currentSrc = APP.getString(MediaInfo.accessibleUrl[eid]);
-      shouldUpdateVideo ||= src !== currentSrc || autoPlay !== video.autoplay || loop !== video.loop;
+      shouldUpdateVideo ||= (src && src !== currentSrc) || autoPlay !== video.autoplay || loop !== video.loop;
       if (shouldUpdateVideo && !hasComponent(world, MediaVideoUpdateSrcEvent, eid)) {
         updateVideoSrc(world, eid, src, video);
       }

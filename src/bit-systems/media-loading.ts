@@ -281,6 +281,7 @@ function* loadByMediaType(
 function* loadMedia(world: HubsWorld, eid: EntityID) {
   const src = APP.getString(MediaLoader.src[eid]);
   let media: EntityID;
+  console.log(`media src: ${src}`);
   try {
     const urlData = (yield resolveMediaInfo(src)) as MediaInfo;
     media = yield* loadByMediaType(world, eid, urlData);
@@ -291,6 +292,7 @@ function* loadMedia(world: HubsWorld, eid: EntityID) {
     MediaInfo.contentType[media] = APP.getSid(urlData.contentType);
     MediaInfo.mediaType[media] = urlData.mediaType || 0;
   } catch (e) {
+    console.log("Failed to load media with the following error.  Continuing on");
     console.error(e);
     media = renderAsEntity(world, ErrorObject());
   }
