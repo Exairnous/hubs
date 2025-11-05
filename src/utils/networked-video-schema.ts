@@ -38,7 +38,7 @@ export const NetworkedVideoSchema: NetworkSchema = {
         time: read(NetworkedVideo.time, eid),
         flags: read(NetworkedVideo.flags, eid),
         projection: read(NetworkedVideo.projection, eid),
-        src: APP.getString(read(NetworkedVideo.src, eid))
+        src: read(NetworkedVideo.src, eid)
       }
     };
   },
