@@ -15,6 +15,7 @@ function apply(eid: EntityID, { version, data }: StoredComponent) {
     return true;
   } else if (version === 2) {
     const { time, flags, projection, src }: { time: number; flags: number; src: string; projection: number } = data;
+    console.log(`networked video apply raw src: ${src}`);
     write(NetworkedVideo.time, eid, time);
     write(NetworkedVideo.flags, eid, flags);
     write(NetworkedVideo.projection, eid, projection);
