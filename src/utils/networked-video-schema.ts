@@ -19,6 +19,7 @@ function apply(eid: EntityID, { version, data }: StoredComponent) {
     write(NetworkedVideo.flags, eid, flags);
     write(NetworkedVideo.projection, eid, projection);
     write(NetworkedVideo.src, eid, APP.getSid(src));
+    console.log(`networked video apply src: ${APP.getString(NetworkedVideo.src[eid])!}`);
     return true;
   }
   return false;

@@ -190,6 +190,7 @@ export function videoSystem(world: HubsWorld, audioSystem: AudioSystem) {
       }
       NetworkedVideo.flags[eid] = flags;
       NetworkedVideo.src[eid] = MediaInfo.accessibleUrl[eid];
+      console.log(`world owned networked video src: ${APP.getString(NetworkedVideo.src[eid])!}`);
     } else {
       let shouldUpdateVideo = false;
       const autoPlay = NetworkedVideo.flags[eid] & VIDEO_FLAGS.AUTO_PLAY ? true : false;
@@ -202,6 +203,7 @@ export function videoSystem(world: HubsWorld, audioSystem: AudioSystem) {
         shouldUpdateVideo ||= true;
       }
       const src = APP.getString(NetworkedVideo.src[eid])!;
+      console.log(`non world owned networked video src: ${src}`);
       const currentSrc = APP.getString(MediaInfo.accessibleUrl[eid]);
       shouldUpdateVideo ||= (src && src !== currentSrc) || autoPlay !== video.autoplay || loop !== video.loop;
       if (shouldUpdateVideo && !hasComponent(world, MediaVideoUpdateSrcEvent, eid)) {
