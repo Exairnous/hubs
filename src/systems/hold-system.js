@@ -88,6 +88,16 @@ function grab(world, userinput, queryHovered, held, grabPath) {
   const target = interactable ? interactable : hovered;
   const holdtarget = holdablebutton ? holdablebutton : target;
   const isEntityPinned = isPinned(target) || isAEntityPinned(world, target);
+  console.log(`hovered: ${hovered}`);
+  console.log(`holdablebutton: ${holdablebutton}`);
+  console.log(`interactable: ${interactable}`);
+  console.log(`target: ${target}`);
+  console.log(`holdtarget: ${holdtarget}`);
+  console.log(`isEntityPinned: ${isEntityPinned}`);
+  console.log(`userinput get grabPath: ${userinput.get(grabPath)}`);
+  console.log(`is frozen: ${AFRAME.scenes[0].is("frozen")}`);
+  console.log(`Holdable flags interactable: ${Holdable.flags[interactable] & HOLDABLE_FLAGS.ENABLED}`);
+  console.log(`hasPermissionToGrab: ${hasPermissionToGrab(world, target)}`);
 
   if (
     target &&
