@@ -83,36 +83,37 @@ export function isAEntityPinned(world, eid) {
 function grab(world, userinput, queryHovered, held, grabPath) {
   const hovered = queryHovered(world)[0];
 
-  const holdablebutton = findAncestorWithComponent(world, HoldableButton, hovered);
+  const holdableButton = findAncestorWithComponent(world, HoldableButton, hovered);
   const interactable = findAncestorWithComponents(world, [Holdable, Rigidbody], hovered);
   const target = interactable ? interactable : hovered;
-  const holdtarget = holdablebutton ? holdablebutton : target;
-  const isEntityPinned = isPinned(target) || isAEntityPinned(world, target);
+  const holdTarget = holdableButton ? holdableButton : target;
+  const isEntityPinned = isPinned(holdTarget) || isAEntityPinned(world, holdTarget);
+  isHoldable = interactable ? Holdable.flags[interactable] & HOLDABLE_FLAGS.ENABLED : 1;
   if (hovered) {
     console.log(`hovered: ${hovered}`);
-    console.log(`holdablebutton: ${holdablebutton}`);
+    console.log(`holdableButton: ${holdableButton}`);
     console.log(`interactable: ${interactable}`);
     console.log(`target: ${target}`);
-    console.log(`holdtarget: ${holdtarget}`);
+    console.log(`holdTarget: ${holdTarget}`);
     console.log(`isEntityPinned: ${isEntityPinned}`);
     console.log(`userinput get grabPath: ${userinput.get(grabPath)}`);
     console.log(`is frozen: ${AFRAME.scenes[0].is("frozen")}`);
-    console.log(`Holdable flags interactable: ${Holdable.flags[interactable] & HOLDABLE_FLAGS.ENABLED}`);
-    console.log(`hasPermissionToGrab: ${hasPermissionToGrab(world, target)}`);
+    console.log(`isHoldable: ${isHoldable}`);
+    console.log(`hasPermissionToGrab: ${hasPermissionToGrab(world, holdTarget)}`);
   }
 
   if (
-    target &&
+    holdTarget &&
     userinput.get(grabPath) &&
     (!isEntityPinned || AFRAME.scenes[0].is("frozen")) &&
-    Holdable.flags[interactable] & HOLDABLE_FLAGS.ENABLED &&
-    hasPermissionToGrab(world, target)
+    isHoldable &&
+    hasPermissionToGrab(world, holdTarget)
   ) {
-    if (hasComponent(world, Networked, target)) {
-      takeOwnership(world, target);
+    if (hasComponent(world, Networked, holdTarget)) {
+      takeOwnership(world, holdTarget);
     }
-    addComponent(world, held, holdtarget);
-    addComponent(world, Held, holdtarget);
+    addComponent(world, held, holdTarget);
+    addComponent(world, Held, holdTarget);
   }
 }
 
