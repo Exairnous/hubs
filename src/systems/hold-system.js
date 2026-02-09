@@ -88,7 +88,7 @@ function grab(world, userinput, queryHovered, held, grabPath) {
   const target = interactable ? interactable : hovered;
   const holdTarget = holdableButton ? holdableButton : target;
   const isEntityPinned = isPinned(holdTarget) || isAEntityPinned(world, holdTarget);
-  isHoldable = interactable ? Holdable.flags[interactable] & HOLDABLE_FLAGS.ENABLED : 1;
+  const isHoldable = interactable ? Holdable.flags[interactable] & HOLDABLE_FLAGS.ENABLED : 1;
   if (hovered) {
     console.log(`hovered: ${hovered}`);
     console.log(`holdableButton: ${holdableButton}`);
