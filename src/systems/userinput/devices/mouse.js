@@ -54,10 +54,20 @@ export class MouseDevice {
   }
 
   process(event) {
-    if (event.type === "wheel") {
-      this.wheel += (event.deltaX + event.deltaY) / modeMod[event.deltaMode];
-      return true;
-    }
+   if (event.type === "wheel") {
+     let delta = (event.deltaX + event.deltaY) / modeMod[event.deltaMode];
+
+     // Boost small deltas (trackpads)
+     if (Math.abs(delta) < 1) {
+       delta *= 10;
+      }
+
+     this.wheel += delta;
+     if (event.ctrlKey) {
+       // pinch gesture (Mac trackpad zoom)
+       delta *= 2;
+     }
+   }
 
     const left = event.button === 0;
     const middle = event.button === 1;
