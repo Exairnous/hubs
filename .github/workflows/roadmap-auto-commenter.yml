@@ -11,4 +11,7 @@ on:
 
 jobs:
   call_reusable_roadmap_auto_commenter:
+    permissions:
+      issues: write
+      pull-requests: write
     uses: Exairnous/hubs-ops/.github/workflows/reusable-roadmap-auto-commenter.yml@roadmap-auto-commenter-test-reusable
