@@ -62,11 +62,11 @@ export class MouseDevice {
        delta *= 10;
       }
 
-     this.wheel += delta;
      if (event.ctrlKey) {
        // pinch gesture (Mac trackpad zoom)
        delta *= 2;
      }
+     this.wheel += delta;
    }
 
     const left = event.button === 0;
